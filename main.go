@@ -27,7 +27,12 @@ func main() {
 			fmt.Fprintf(os.Stderr, "failure to open file %q\n", fn)
 			os.Exit(1)
 		}
-		defer f.Close()
+		defer func() {
+			if err := f.Close(); err != nil {
+				fmt.Fprintf(os.Stderr, "failure to close file: %v\n", err)
+				os.Exit(1)
+			}
+		}()
 		w = io.MultiWriter(f, w)
 		r = f
 	}
