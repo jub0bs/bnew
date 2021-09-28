@@ -10,9 +10,11 @@ import (
 
 func main() {
 	var (
+		dry      bool
 		quiet    bool
 		sizeHint int
 	)
+	flag.BoolVar(&dry, "d", false, "dry mode (no file modification)")
 	flag.BoolVar(&quiet, "q", false, "quiet mode")
 	flag.IntVar(&sizeHint, "n", 1024, "size hint")
 	flag.Parse()
@@ -33,7 +35,9 @@ func main() {
 				os.Exit(1)
 			}
 		}()
-		w = io.MultiWriter(f, w)
+		if !dry {
+			w = io.MultiWriter(f, w)
+		}
 		r = f
 	}
 	if err := Bnew(w, r, os.Stdin, sizeHint); err != nil {
